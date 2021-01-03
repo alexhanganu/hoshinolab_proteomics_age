@@ -25,20 +25,18 @@ class VARS():
 
 
     def f_and_sheets(self):
-        f_source = path.join(self.project_vars['materials_DIR'],
-                'source','0.data_samira_main_20180614.xlsx').replace(sep, '/')
-        f_WM_subj = path.join(self.project_vars['materials_DIR'],
-                'source','0.data_samira_sujets_WM_20201125.xlsx').replace(sep, '/')
-        f_SEM_subj = path.join(self.project_vars['materials_DIR'],
-                'source','0.data_samira_sujets_SEM_20201125.xlsx').replace(sep, '/')
-        params_x, params_y = self.params_demographics()
-        return {'source':{'file': f_source, 'sheet' : 'ALL_DATA_STRUCTURELLE', 'ids':'Code_SCAN',
-                          'cols': params_x+params_y+self.params_other(), 'rename': ''},
-                'HINT': {'file': f_source, 'sheet' : 'HINT', 'ids':'Unnamed: 0',
-                         'cols':['Unnamed: 0', 'âge au moment scan', 'sexe', 'MOCA'],
-                         'rename': {'âge au moment scan': 'Age', 'sexe': 'Gender'}},
-                'WM':{'file': f_WM_subj, 'sheet' : 'Feuil1', 'ids':'fMRI_Code',
-                      'cols': ['fMRI_Code', 'Age', 'Gender', 'Scol', 'MoCA'],
-                      'rename': {'MoCA': 'MOCA', 'Scol': 'education'}},
-                'SEM':{'file': f_SEM_subj, 'sheet' : 'Feuille 1 - Tableau 1', 'ids':'',
-                       'cols': '', 'rename': ''}}
+    	f_src_subs  = "info.xlsx"
+        f_src_60    = "Ayuko_Lyden_autism_project_all_60_samples_PD.xlsx"
+        f_src_dJon  = "MS151970QE_Bruno_Lyden_control_dad_Jon.xlsx"
+        f_src_d_ct  = "MS151649QE_Bruno_Lyden_control2_dad.xlsx"
+        f_src_m_hz  = "MS151970QE_Bruno_Lyden_control_mom_HZ.xlsx"
+        f_src_m_ct1 = "MS151649QE_Bruno_Lyden_control1_mom.xlsx"
+        f_src_p_ea  = "MS151970QE_Bruno_Lyden_PNC_EA.xlsx"
+        f_src_p_dg  = "MS151818QE_Bruno_Lyden_PNC_DG.xlsx"
+        f_src_p_fs  = "MS151818QE_Bruno_Lyden_PNC_FS.xlsx"
+        f_src_p_ss  = "MS151818QE_Bruno_Lyden_PNC_SS.xlsx"
+        f_src_p_jm  = "MS151970QE_Bruno_Lyden_PNC_JM.xlsx"
+        f_src_p_eg  = "MS151970QE_Bruno_Lyden_PNC_EG.xlsx"
+        f_src_autsm = "MS162577_Ayuko_Lyden_autism_all_data_PD.xlsx"
+        return {'subjects':{'file': f_src_subs,
+                          'cols': "area"}
