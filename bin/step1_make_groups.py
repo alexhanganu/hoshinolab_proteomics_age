@@ -13,12 +13,11 @@ Return:
     True or False if all steps are correct and finished
 '''
 
-from os import listdir, path, walk, sep
-
+from os import path 
 from .vars import VARS
 import numpy as np
-import logging
 
+import logging
 log = logging.getLogger(__name__)
 logging.basicConfig(format='%(message)s')
 log.setLevel(logging.INFO)
@@ -29,12 +28,14 @@ class MakeGroupFile:
         self.vars         = VARS(project_vars)
         self._id          = project_vars['id_col']
         src_file          = self.vars.f_src()['file_src']
-        self.df           = db_processing.read_xlsx_file(src_file['file'], src_file['sheet'], src_file['cols'])
+        self.df           = Table().get_df(path.join(project_vars['materials_DIR'][1], src_file))
         # self.exclude_nan  = False
         self.run()
 
     def run(self):
-    	print(self.df.columns)
+        for _id in self.df[self._id]:
+            _id_src_file = self.df[self.df['File name'], self.df[self._id] == _id]
+            print(_id, _id_src_file)
         # ready_miss   = self.get_missing_data()
         # self.project_vars["materials_DIR"] = 'C:/Users/Jessica/Desktop' #tmp, to be removed
         # if ready_miss:
