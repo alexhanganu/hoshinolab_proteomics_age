@@ -2,10 +2,7 @@
 # coding: utf-8
 # last update: 2020-11-13
 
-'''
-Sylvie Study Brain Reserve
-'''
-project = "brain_reserve"
+project = "hoshinolab_proteomics_age"
 
 STEP0_make_groups        = True
 STEP1_prep1_fs711_dir    = False # this step was needed temporarily to clean the FS711 folder. Probably not needed anymore
@@ -21,7 +18,7 @@ project_vars = all_vars.projects[project]
 #nimb_stats = SetProject(all_vars.location_vars['local']['NIMB_PATHS']['NIMB_tmp'], all_vars.stats_vars, project).stats
 
 if STEP0_make_groups:
-    from bin.step0_prep4_make_groups import MakeGroupFile
+    from bin.step1_make_groups import MakeGroupFile
     MakeGroupFile(project_vars)
     #step0_make_groups.make_file_groups()
 
