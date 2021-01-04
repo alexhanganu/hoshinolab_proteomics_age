@@ -6,7 +6,7 @@ class VARS():
         self.project_vars       = project_vars
 
 
-    def f_and_sheets(self):
+    def f_src(self):
         f_src_subs  = "info.xlsx"
         cols = ['ID', 'File name', 'sample name', 'age']
         # f_src_60    = "Ayuko_Lyden_autism_project_all_60_samples_PD.xlsx"
