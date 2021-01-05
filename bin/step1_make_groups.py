@@ -30,12 +30,16 @@ class MakeGroupFile:
         src_file          = self.vars.f_src()['file_src']
         self.df           = Table().get_df(path.join(project_vars['materials_DIR'][1], src_file))
         # self.exclude_nan  = False
+        self.col_files    = 'File name'
         self.run()
 
     def run(self):
-        for _id in self.df[self._id]:
-            _id_src_file = self.df[self.df['File name'], self.df[self._id] == _id]
-            print(_id, _id_src_file)
+        _ids_files = {}
+        for ix in self.df.index:
+            _id = self.df.at[ix, self._id] 
+            _id_src_file = self.df.at[ix, self.col_files]
+            _ids_files[_id] = {'file': _id_src_file, 'age'}
+        print(_ids_files)
         # ready_miss   = self.get_missing_data()
         # self.project_vars["materials_DIR"] = 'C:/Users/Jessica/Desktop' #tmp, to be removed
         # if ready_miss:
