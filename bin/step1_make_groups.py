@@ -27,19 +27,35 @@ class MakeGroupFile:
         self.project_vars = project_vars
         self.vars         = VARS(project_vars)
         self._id          = project_vars['id_col']
-        src_file          = self.vars.f_src()['file_src']
+        self.group_param  = project_vars['group_param']
+        f_src             = self.vars.f_src()
+        src_file          = f_src['file_src']
         self.df           = Table().get_df(path.join(project_vars['materials_DIR'][1], src_file))
-        # self.exclude_nan  = False
-        self.col_files    = 'File name'
+        self.col_files    = f_src['col_files']
+
         self.run()
 
     def run(self):
         _ids_files = {}
         for ix in self.df.index:
-            _id = self.df.at[ix, self._id] 
-            _id_src_file = self.df.at[ix, self.col_files]
-            _ids_files[_id] = {'file': _id_src_file, 'age'}
+            _ids_files[self.df.at[ix, self._id]] = {
+                'file': self.df.at[ix, self.col_files],
+                self.group_param : self.df.at[ix, self.group_param]
+                }
         print(_ids_files)
+
+                # f_src_60    = "Ayuko_Lyden_autism_project_all_60_samples_PD.xlsx"
+        # f_src_dJon  = "MS151970QE_Bruno_Lyden_control_dad_Jon.xlsx"
+        # f_src_d_ct  = "MS151649QE_Bruno_Lyden_control2_dad.xlsx"
+        # f_src_m_hz  = "MS151970QE_Bruno_Lyden_control_mom_HZ.xlsx"
+        # f_src_m_ct1 = "MS151649QE_Bruno_Lyden_control1_mom.xlsx"
+        # f_src_p_ea  = "MS151970QE_Bruno_Lyden_PNC_EA.xlsx"
+        # f_src_p_dg  = "MS151818QE_Bruno_Lyden_PNC_DG.xlsx"
+        # f_src_p_fs  = "MS151818QE_Bruno_Lyden_PNC_FS.xlsx"
+        # f_src_p_ss  = "MS151818QE_Bruno_Lyden_PNC_SS.xlsx"
+        # f_src_p_jm  = "MS151970QE_Bruno_Lyden_PNC_JM.xlsx"
+        # f_src_p_eg  = "MS151970QE_Bruno_Lyden_PNC_EG.xlsx"
+        # f_src_autsm = "MS162577_Ayuko_Lyden_autism_all_data_PD.xlsx"
         # ready_miss   = self.get_missing_data()
         # self.project_vars["materials_DIR"] = 'C:/Users/Jessica/Desktop' #tmp, to be removed
         # if ready_miss:
