@@ -1,10 +1,10 @@
 #!/bin/python
 
+from os import path
 
 class VARS():
-    def __init__(self, project_vars):
-        self.project_vars       = project_vars
-
+    def __init__(self, materials_DIR):
+        self.materials_DIR       = materials_DIR
 
     def f_src(self):
         f_src_subs  = "info.xlsx"
@@ -16,7 +16,7 @@ class VARS():
         _ids_files = {}
         for ix in df.index:
             _ids_files[df.at[ix, _id]] = {
-                'file': df.at[ix, self.f_src()['col_files']],
+                'file': path.join(self.materials_DIR, df.at[ix, self.f_src()['col_files']]),
                 }
         return _ids_files
 
@@ -35,3 +35,4 @@ class VARS():
             "MS151970QE_Bruno_Lyden_PNC_EG.xlsx"                : "",
             "MS162577_Ayuko_Lyden_autism_all_data_PD.xlsx"      : "",
             }
+
