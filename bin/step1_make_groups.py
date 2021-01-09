@@ -1,6 +1,6 @@
 #!/bin/python
 # -*- coding: utf-8 -*-
-#Alexandru Hanganu, 2020 nov 17
+#Alexandru Hanganu, 20200109
 
 ''' Read the source file with data
     extracts the corresponding variables
@@ -15,27 +15,25 @@ Return:
 
 from os import path 
 from .vars import VARS
-import numpy as np
 
-import logging
-log = logging.getLogger(__name__)
-logging.basicConfig(format='%(message)s')
-log.setLevel(logging.INFO)
 
 class MakeGroupFile:
-    def __init__(self, project_vars, Table, utils):
+    def __init__(self, project_vars, utils, Table, Preprocess):
+        self.tab          = Table()
+        self.preproc      = Preprocess()
         self.project_vars = project_vars
-        self.vars         = VARS(project_vars)
         self._id          = project_vars['id_col']
         self.group_param  = project_vars['group_param']
+        self.vars         = VARS(project_vars)
         f_src             = self.vars.f_src()
         src_file          = f_src['file_src']
-        self.df           = Table().get_df(path.join(project_vars['materials_DIR'][1], src_file))
         self.col_files    = f_src['col_files']
 
         self.run()
 
     def run(self):
+        src_file_path    = path.join(project_vars['materials_DIR'][1], src_file)
+        self.df           = self.tab.get_df(src_file_path)
         _ids_files = {}
         for ix in self.df.index:
             _ids_files[self.df.at[ix, self._id]] = {
