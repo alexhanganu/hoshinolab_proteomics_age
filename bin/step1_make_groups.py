@@ -24,6 +24,7 @@ class MakeGroupFile:
         self.project_vars = project_vars
         self._id          = project_vars['id_col']
         self.group_param  = project_vars['group_param']
+        self.materials_DIR = project_vars["materials_DIR"][1]
         self.vars         = VARS(project_vars)
         f_src             = self.vars.f_src()
         src_file          = f_src['file_src']
@@ -64,86 +65,28 @@ class MakeGroupFile:
         #     self.create_data_file()
         # else:
         #     log.info(f'ERR in steps of missing data of defining doublons, doublons')
+        self.populate_missing_data()
+        self.df.set_index(self._id, inplace = True)
+        self.create_data_file()
 
-    def check_subjects(self):
-        self.ls_indices_to_drop = list()
-        for ix in self.df.index.tolist():
-            _id_scan = self.df.at[ix, self._id]
-            self.populate_missing_values(_id_scan, ix)
-            self.exclude_on_criterion(_id_scan, ix)
-            self.exclude_subject(_id_scan, ix)
-        log.info('excluding {} subjects based on exclusion ,alternate and values'.format(len(self.ls_indices_to_drop)))
-        self.df.drop(self.ls_indices_to_drop, inplace=True)
 
-    def populate_missing_values(self, _id_scan, ix):
-        if _id_scan in self.vals_retrieved:
-            for col in self.vals_retrieved[_id_scan]:
-                value = self.vals_retrieved[_id_scan][col]
-                if isinstance(value, str):
-                    value = np.nan
-                self.df.at[ix, col] = value
-
-    def exclude_on_criterion(self, _id_scan, ix):
-        ex_criteria = {'MOCA' : {'dir':'<=', 'type': 'int', 'value': 25},}
-                # 'Age'  : {'dir':'>=', 'type': 'float', 'value': 90.0}}
-        self.excluded_on_criterion = {}
-        for criterion in ex_criteria:
-            type_crit = ex_criteria[criterion]['type']
-            dir = ex_criteria[criterion]['dir']
-            value = self.df.at[ix, criterion]
-            if type_crit == 'float' and not np.isnan(value):
-                if float(value) <= float(ex_criteria[criterion]['value']):
-                    print('    excluding {}, {}, {}'.format(_id_scan, criterion, value))
-                    self.excluded_on_criterion[_id_scan] = {criterion:value}
-            elif type_crit == 'int' and not np.isnan(value):
-                if int(value) <= int(ex_criteria[criterion]['value']):
-                    print('    excluding {}, {}, {}'.format(_id_scan, criterion, value))
-                    self.excluded_on_criterion[_id_scan] = {criterion:value}
-            elif np.isnan(value) and self.exclude_nan:
-                    print('    excluding {}, {}, {}'.format(_id_scan, criterion, value))
-                    self.excluded_on_criterion[_id_scan] = {criterion:value}
-
-    def exclude_subject(self, _id_scan, ix):
-        if _id_scan in self.vars.doublons_excluded() \
-            or _id_scan in self.vars.doublons_with_alternates() \
-            or _id_scan in self.vars.doublons_alternate_on_age() \
-            or _id_scan in self.excluded_on_criterion:
-            self.ls_indices_to_drop.append(ix)
-
-    def exclude_columns(self):
-        cols_to_exclude = ['Code_Study', 'Code Labo', 'Code_Participant','SCANNER','NB de cannaux','Année_SCAN','séance longitudinal', 'Doublon']
-        self.df.drop(columns = cols_to_exclude, inplace=True)
-
-    def create_groups(self):
-        groups      = self.vars.groups()
-        thresh      = self.vars.group_thresh()
-        group_col   = self.project_vars["group_col"]
-        group_param = self.project_vars["group_param"]
-
-        conditions = list()
-        values     = list()
-        for group in groups:
-            if groups[group] == '>=':
-                values.append(group)
-                conditions.append((self.df[group_param] >= thresh))
-            if groups[group] == '<':
-                values.append(group)
-                conditions.append((self.df[group_param] < thresh))
-        self.df[group_col] = np.select(conditions, values)
+    def populate_missing_data(self):
+        """Some values are missing. If number of missing values is lower then 5%,
+            missing values are changed to group mean
+            else: columns is excluded
+        """
+        _, cols_with_nans = self.tab.check_nan(self.grid_df, self.miss_val_file)
+        df_groups = dict()
+        for group in self.groups:
+            df_group = self.tab.get_df_per_parameter(self.grid_df, self.project_vars['group_col'], group)
+            df_group = self.preproc.populate_missing_vals_2mean(df_group, cols_with_nans)
+            df_groups[group] = df_group
+        frames = (df_groups[i] for i in df_groups)
+        df_meaned_vals = pd.concat(frames, axis=0, sort=True)
+        for col in cols_with_nans:
+            self.grid_df[col] = df_meaned_vals[col]
 
     def create_data_file(self):
-        data_file = path.join(self.project_vars["materials_DIR"], self.project_vars["GLM_file_group"])
-        log.info('creating file with groups {}'.format(data_file))
-        self.df.set_index(self._id, inplace = True)
-        self.df.to_excel(data_file)
-
-    def get_missing_data(self):
-        self.f_missing_values = get_path(path.dirname(__file__), self.vars.f_missing_values)
-        if not path.exists(self.f_missing_values):
-            from .step0_prep2_chk_data import GetMissingData
-            ready = GetMissingData(self.project_vars, self.df).ready
-        else:
-            ready = True
-        if ready:
-            self.vals_retrieved = load_json(self.f_missing_values)
-        return ready
+        file_path_name = path.join(self.materials_DIR, self.project_vars["GLM_file_group"])
+        print('creating file with groups {}'.format(file_path_name))
+        self.tab.save_df(self.grid_df, file_path_name, sheet_name = 'grid')
