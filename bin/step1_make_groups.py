@@ -26,23 +26,20 @@ class MakeGroupFile:
         self.group_param  = project_vars['group_param']
         self.materials_DIR = project_vars["materials_DIR"][1]
         self.vars         = VARS(project_vars)
-        f_src             = self.vars.f_src()
-        src_file          = f_src['file_src']
-        self.col_files    = f_src['col_files']
+        self.src_file     = self.vars.f_src()['file_src']
 
         self.run()
 
     def run(self):
-        src_file_path    = path.join(project_vars['materials_DIR'][1], src_file)
-        self.df           = self.tab.get_df(src_file_path)
-        _ids_files = {}
-        for ix in self.df.index:
-            _ids_files[self.df.at[ix, self._id]] = {
-                'file': self.df.at[ix, self.col_files],
-                self.group_param : self.df.at[ix, self.group_param]
-                }
-        print(_ids_files)
-
+        '''
+            reading the info.xlsx file, extracting list of IDs and corresponding
+            files with data
+        '''
+        src_file_path = path.join(self.project_vars['materials_DIR'][1], self.src_file)
+        self.df       = self.tab.get_df(src_file_path)
+        _ids_files = self.vars.get_ids_and_data_files(self.df, self._id)
+        for key in _ids_files:
+            print(key, _ids_files[key])
                 # f_src_60    = "Ayuko_Lyden_autism_project_all_60_samples_PD.xlsx"
         # f_src_dJon  = "MS151970QE_Bruno_Lyden_control_dad_Jon.xlsx"
         # f_src_d_ct  = "MS151649QE_Bruno_Lyden_control2_dad.xlsx"
@@ -65,9 +62,10 @@ class MakeGroupFile:
         #     self.create_data_file()
         # else:
         #     log.info(f'ERR in steps of missing data of defining doublons, doublons')
-        self.populate_missing_data()
-        self.df.set_index(self._id, inplace = True)
-        self.create_data_file()
+
+        # self.populate_missing_data()
+        # self.df.set_index(self._id, inplace = True)
+        # self.create_data_file()
 
 
     def populate_missing_data(self):
