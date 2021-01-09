@@ -19,3 +19,19 @@ class VARS():
                 'file': df.at[ix, self.f_src()['col_files']],
                 }
         return _ids_files
+
+    def get_cols_2read(self):
+        return {
+            "Ayuko_Lyden_autism_project_all_60_samples_PD.xlsx" : "",
+            "MS151970QE_Bruno_Lyden_control_dad_Jon.xlsx"       : "",
+            "MS151649QE_Bruno_Lyden_control2_dad.xlsx"          : "",
+            "MS151970QE_Bruno_Lyden_control_mom_HZ.xlsx"        : "",
+            "MS151649QE_Bruno_Lyden_control1_mom.xlsx"          : "",
+            "MS151970QE_Bruno_Lyden_PNC_EA.xlsx"                : "",
+            "MS151818QE_Bruno_Lyden_PNC_DG.xlsx"                : "",
+            "MS151818QE_Bruno_Lyden_PNC_FS.xlsx"                : "",
+            "MS151818QE_Bruno_Lyden_PNC_SS.xlsx"                : "",
+            "MS151970QE_Bruno_Lyden_PNC_JM.xlsx"                : "",
+            "MS151970QE_Bruno_Lyden_PNC_EG.xlsx"                : "",
+            "MS162577_Ayuko_Lyden_autism_all_data_PD.xlsx"      : "",
+            }

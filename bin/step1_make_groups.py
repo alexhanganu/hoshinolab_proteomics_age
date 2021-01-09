@@ -40,41 +40,16 @@ class MakeGroupFile:
         _ids_files = self.vars.get_ids_and_data_files(self.df, self._id)
         for key in _ids_files:
             print(key, _ids_files[key])
-                # f_src_60    = "Ayuko_Lyden_autism_project_all_60_samples_PD.xlsx"
-        # f_src_dJon  = "MS151970QE_Bruno_Lyden_control_dad_Jon.xlsx"
-        # f_src_d_ct  = "MS151649QE_Bruno_Lyden_control2_dad.xlsx"
-        # f_src_m_hz  = "MS151970QE_Bruno_Lyden_control_mom_HZ.xlsx"
-        # f_src_m_ct1 = "MS151649QE_Bruno_Lyden_control1_mom.xlsx"
-        # f_src_p_ea  = "MS151970QE_Bruno_Lyden_PNC_EA.xlsx"
-        # f_src_p_dg  = "MS151818QE_Bruno_Lyden_PNC_DG.xlsx"
-        # f_src_p_fs  = "MS151818QE_Bruno_Lyden_PNC_FS.xlsx"
-        # f_src_p_ss  = "MS151818QE_Bruno_Lyden_PNC_SS.xlsx"
-        # f_src_p_jm  = "MS151970QE_Bruno_Lyden_PNC_JM.xlsx"
-        # f_src_p_eg  = "MS151970QE_Bruno_Lyden_PNC_EG.xlsx"
-        # f_src_autsm = "MS162577_Ayuko_Lyden_autism_all_data_PD.xlsx"
-        # ready_miss   = self.get_missing_data()
-        # self.project_vars["materials_DIR"] = 'C:/Users/Jessica/Desktop' #tmp, to be removed
-        # if ready_miss:
-        #     log.info('missing data populated, doublons defined')
-        #     self.check_subjects()
-        #     self.exclude_columns()
-        #     self.create_groups()
-        #     self.create_data_file()
-        # else:
-        #     log.info(f'ERR in steps of missing data of defining doublons, doublons')
-
-        # self.populate_missing_data()
+        # self.populate_grid_with_col_data_transposed()
         # self.df.set_index(self._id, inplace = True)
         # self.create_data_file()
 
 
-    def populate_missing_data(self):
-        """Some values are missing. If number of missing values is lower then 5%,
-            missing values are changed to group mean
-            else: columns is excluded
+    def populate_grid_with_col_data_transposed(self):
+        """Extract data for IDs from corresponding files, from defined columns
+            transpose data so that ID becomes index, and data are transposed
+            feature names are taken from each file, from a defined column
         """
-        _, cols_with_nans = self.tab.check_nan(self.grid_df, self.miss_val_file)
-        df_groups = dict()
         for group in self.groups:
             df_group = self.tab.get_df_per_parameter(self.grid_df, self.project_vars['group_col'], group)
             df_group = self.preproc.populate_missing_vals_2mean(df_group, cols_with_nans)
