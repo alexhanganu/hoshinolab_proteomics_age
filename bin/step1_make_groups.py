@@ -49,16 +49,35 @@ class MakeGroupFile:
             feature names are taken from each file, from a defined column
         """
         df_all_data = dict()
-        for _id in _ids_files:
-            file_2read = _ids_files[_id]['file']
-            col_2read  = _ids_files[_id]['col2read']
-            df_id_data = self.tab.get_df(file_2read, col_2read)
+        cols_2read = self.vars.get_cols_2read()
+        files_2rm_2ndrow = self.vars.files_2rm_2ndrow()
+        file_path_current = ''
+        for _id in list(_ids_files.keys())[54:55]:
+            print(_id)
+            file_2read = _ids_files[_id]['file_name']
+            file_path  = _ids_files[_id]['file_path']
+            file_cols_2read  = cols_2read[file_2read]
+            if file_path != file_path_current:
+                file_path_current = file_path
+                df_id_data = self.tab.get_df(file_path_current, cols = file_cols_2read)
+                if file_2read not in files_2rm_2ndrow:
+                    df_all_data[_id] = df_id_data
+                else:
+                    df_all_data[_id] = self.adjust_for_2nd_row(df_id_data)
         #     df_id_data = self.preproc.populate_missing_vals_2mean(df_id_data, cols_with_nans)
-        #     df_all_data[_id] = df_id_data
         # frames = (df_all_data[i] for i in df_all_data)
         # df_meaned_vals = pd.concat(frames, axis=0, sort=True)
         # for col in cols_with_nans:
         #     self.grid_df[col] = df_meaned_vals[col]
+
+    def adjust_for_2nd_row(self, df):
+        '''
+            two files have the parameters in the second row
+            script changes row names
+            returns df with structure: col1, col2
+        '''
+        print(df)
+        return df
 
     def create_data_file(self):
         file_path_name = path.join(self.materials_DIR, self.project_vars["GLM_file_group"])
