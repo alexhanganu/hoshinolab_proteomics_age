@@ -41,6 +41,7 @@ class MakeGroupFile:
         self.concatenate_dfs()
         self.grid_df = self.tab.rm_rows_with_nan(self.grid_df)
         self.grid_df = self.grid_df.transpose()
+        self.grid_df.index.name = self._id
         self.create_data_file()
 
 
