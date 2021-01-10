@@ -51,35 +51,37 @@ class MakeGroupFile:
         df_all_data = dict()
         cols_2read = self.vars.get_cols_2read()
         files_2rm_2ndrow = self.vars.files_2rm_2ndrow()
+        param_names = self.vars.param_names()
         file_path_current = ''
-        for _id in list(_ids_files.keys())[54:55]:
+        for _id in list(_ids_files.keys())[54:]:
             print(_id)
             file_2read = _ids_files[_id]['file_name']
             file_path  = _ids_files[_id]['file_path']
             file_cols_2read  = cols_2read[file_2read]
             if file_path != file_path_current:
                 file_path_current = file_path
-                df_id_data = self.tab.get_df(file_path_current, cols = file_cols_2read)
-                if file_2read not in files_2rm_2ndrow:
-                    df_all_data[_id] = df_id_data
-                else:
-                    df_all_data[_id] = self.adjust_for_2nd_row(df_id_data)
-        #     df_id_data = self.preproc.populate_missing_vals_2mean(df_id_data, cols_with_nans)
-        # frames = (df_all_data[i] for i in df_all_data)
-        # df_meaned_vals = pd.concat(frames, axis=0, sort=True)
-        # for col in cols_with_nans:
-        #     self.grid_df[col] = df_meaned_vals[col]
+            df_id_data = self.tab.get_df(file_path_current, cols = file_cols_2read)
+            df_id_data = self.tab.rm_rows_with_nan(df_id_data, file_cols_2read[0])
+            if file_2read in files_2rm_2ndrow:
+                df_id_data = self.adjust_for_2nd_row(df_id_data, param_names["param"])
+            df_id_data.rename(columns = {df_id_data.columns.tolist()[-1]: _id}, inplace=True)
+            df_id_data = self.tab.change_index(df_id_data, param_names["protein_id"])
+            df_all_data[_id] = df_id_data
+        frames = (df_all_data[i] for i in df_all_data)
+        self.grid_df = self.tab.concat_dfs(frames, ax=1, sort=True)
+        self.create_data_file()
 
-    def adjust_for_2nd_row(self, df):
+    def adjust_for_2nd_row(self, df, param):
         '''
             two files have the parameters in the second row
             script changes row names
             returns df with structure: col1, col2
         '''
-        print(df)
+        df.columns = df.iloc[0]
+        df.drop([0], inplace = True)
         return df
 
     def create_data_file(self):
-        file_path_name = path.join(self.materials_DIR, self.project_vars["GLM_file_group"])
-        print('creating file with groups {}'.format(file_path_name))
-        self.tab.save_df(self.grid_df, file_path_name, sheet_name = 'grid')
+        path_name_f2save   = path.join('/home/ssp/Desktop', self.project_vars["GLM_file_group"])
+        print('creating file with groups {}'.format(path_name_f2save))
+        self.tab.save_df(self.grid_df, path_name_f2save, sheet_name = 'grid')
