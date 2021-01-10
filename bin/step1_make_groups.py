@@ -23,9 +23,9 @@ class MakeGroupFile:
         self.preproc       = Preprocess()
         self.project_vars  = project_vars
         self._id           = project_vars['id_col']
-        self.group_param   = project_vars['group_param']
+        self.vars_4glm     = project_vars['variables_for_glm']
         self.materials_DIR = project_vars["materials_DIR"][1]
-        self.vars          = VARS(self.materials_DIR)
+        self.vars          = VARS(self.materials_DIR, project_vars)
         self.param_names   = self.vars.param_names()
 
         self.run()
@@ -36,7 +36,7 @@ class MakeGroupFile:
             files with data
         '''
         self.df_src     = self.tab.get_df(self.vars.f_src()['file_src'])
-        self._ids_files = self.vars.get_ids_and_data_files(self.df_src, self._id)
+        self._src_data = self.vars.get_data_from_src_file(self.df_src)
         self.populate_grid()
         self.concatenate_dfs()
         self.grid_df = self.tab.rm_rows_with_nan(self.grid_df)
@@ -53,19 +53,19 @@ class MakeGroupFile:
         self.df_all_data = dict()
         self.col_2set_index = self.param_names["protein_id"]
         multi_ids = list()
-        for _id in list(self._ids_files.keys()):
-            file_2read = self._ids_files[_id]['file_name']
+        for _id in list(self._src_data.keys()):
+            file_2read = self._src_data[_id]['file_name']
             if file_2read not in self.vars.files_multi_ids():
                 self.read_id_per_file(file_2read, _id)
             else:
                 if _id not in multi_ids:
                     multi_ids.append(_id)
-        if multi_ids:
-            self.read_multiples_ids_from_file(multi_ids)
+        # if multi_ids:
+        #     self.read_multiples_ids_from_file(multi_ids)
 
     def read_multiples_ids_from_file(self, multi_ids):
-        file_2read = self._ids_files[multi_ids[0]]['file_name']
-        file_path  = self._ids_files[multi_ids[0]]['file_path']
+        file_2read = self._src_data[multi_ids[0]]['file_name']
+        file_path  = self._src_data[multi_ids[0]]['file_path']
         df = self.tab.get_df(file_path)
         # df.drop(self.vars.rows_2rm_per_file()[file_2read], inplace = True)
         cols_2rename = {df.columns.tolist()[0]: self.col_2set_index}
@@ -79,7 +79,7 @@ class MakeGroupFile:
 
 
     def read_id_per_file(self, file_2read, _id):
-        file_path  = self._ids_files[_id]['file_path']
+        file_path  = self._src_data[_id]['file_path']
         cols = list(self.param_names.values())
         if file_2read in self.vars.get_cols_2read():
             cols = self.vars.get_cols_2read()[file_2read]
@@ -87,8 +87,16 @@ class MakeGroupFile:
         if file_2read in self.vars.rows_2rm_per_file():
             df = self.adjust_rm_rows(df, self.vars.rows_2rm_per_file()[file_2read])
         df = self.tab.rm_rows_with_nan(df, self.col_2set_index, reset_index = True)
+        df = self.add_variables_4glm(df)
         df = self.prepare_df_for_grid(df, _id)
         self.df_all_data[_id] = df
+
+    def add_variables_4glm(self, df):
+        for var in self.vars_4glm:
+            print(var, self._src_data[_id][var])
+            df.at[-1, self.col_2set_index] = self._src_data[_id][var]
+        print(df)
+        return df
 
     def prepare_df_for_grid(self, df, _id):
         df.rename(columns = {df.columns.tolist()[-1]: _id}, inplace=True)
