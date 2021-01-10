@@ -40,6 +40,7 @@ class MakeGroupFile:
         self.populate_grid()
         self.concatenate_dfs()
         self.grid_df = self.tab.rm_rows_with_nan(self.grid_df)
+        self.grid_df = self.grid_df.transpose()
         self.create_data_file()
 
 
@@ -71,7 +72,7 @@ class MakeGroupFile:
         for _id in multi_ids:
             df_id = df[[self.col_2set_index, _id]]
             df_id = self.adjust_rm_rows(df_id, self.vars.rows_2rm_per_file()[file_2read])
-            df_id = self.tab.rm_rows_with_nan(df_id, self.col_2set_index)
+            df_id = self.tab.rm_rows_with_nan(df_id, self.col_2set_index, reset_index = True)
             df_id = self.prepare_df_for_grid(df_id, _id)
             self.df_all_data[_id] = df_id
 
@@ -84,7 +85,7 @@ class MakeGroupFile:
         df = self.tab.get_df(file_path, cols = cols)
         if file_2read in self.vars.rows_2rm_per_file():
             df = self.adjust_rm_rows(df, self.vars.rows_2rm_per_file()[file_2read])
-        df = self.tab.rm_rows_with_nan(df, self.col_2set_index)
+        df = self.tab.rm_rows_with_nan(df, self.col_2set_index, reset_index = True)
         df = self.prepare_df_for_grid(df, _id)
         self.df_all_data[_id] = df
 
