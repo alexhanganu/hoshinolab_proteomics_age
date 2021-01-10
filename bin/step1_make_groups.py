@@ -26,7 +26,7 @@ class MakeGroupFile:
         self.group_param   = project_vars['group_param']
         self.materials_DIR = project_vars["materials_DIR"][1]
         self.vars          = VARS(self.materials_DIR)
-        self.src_file      = self.vars.f_src()['file_src']
+        self.param_names   = self.vars.param_names()
 
         self.run()
 
@@ -35,53 +35,83 @@ class MakeGroupFile:
             reading the info.xlsx file, extracting list of IDs and corresponding
             files with data
         '''
-        src_file_path = path.join(self.materials_DIR, self.src_file)
-        self.df       = self.tab.get_df(src_file_path)
-        _ids_files = self.vars.get_ids_and_data_files(self.df, self._id)
-        self.populate_grid_with_col_data_transposed(_ids_files)
-        # self.df.set_index(self._id, inplace = True)
-        # self.create_data_file()
+        self.df_src     = self.tab.get_df(self.vars.f_src()['file_src'])
+        self._ids_files = self.vars.get_ids_and_data_files(self.df_src, self._id)
+        self.populate_grid()
+        self.concatenate_dfs()
+        self.grid_df = self.tab.rm_rows_with_nan(self.grid_df)
+        self.create_data_file()
 
 
-    def populate_grid_with_col_data_transposed(self, _ids_files):
+    def populate_grid(self):
         """Extract data for IDs from corresponding files, from defined columns
             transpose data so that ID becomes index, and data are transposed
             feature names are taken from each file, from a defined column
         """
-        df_all_data = dict()
-        cols_2read = self.vars.get_cols_2read()
-        files_2rm_2ndrow = self.vars.files_2rm_2ndrow()
-        param_names = self.vars.param_names()
-        file_path_current = ''
-        for _id in list(_ids_files.keys())[54:]:
-            print(_id)
-            file_2read = _ids_files[_id]['file_name']
-            file_path  = _ids_files[_id]['file_path']
-            file_cols_2read  = cols_2read[file_2read]
-            if file_path != file_path_current:
-                file_path_current = file_path
-            df_id_data = self.tab.get_df(file_path_current, cols = file_cols_2read)
-            df_id_data = self.tab.rm_rows_with_nan(df_id_data, file_cols_2read[0])
-            if file_2read in files_2rm_2ndrow:
-                df_id_data = self.adjust_for_2nd_row(df_id_data, param_names["param"])
-            df_id_data.rename(columns = {df_id_data.columns.tolist()[-1]: _id}, inplace=True)
-            df_id_data = self.tab.change_index(df_id_data, param_names["protein_id"])
-            df_all_data[_id] = df_id_data
-        frames = (df_all_data[i] for i in df_all_data)
-        self.grid_df = self.tab.concat_dfs(frames, ax=1, sort=True)
-        self.create_data_file()
+        self.df_all_data = dict()
+        self.col_2set_index = self.param_names["protein_id"]
+        multi_ids = list()
+        for _id in list(self._ids_files.keys()):
+            file_2read = self._ids_files[_id]['file_name']
+            if file_2read not in self.vars.files_multi_ids():
+                self.read_id_per_file(file_2read, _id)
+            else:
+                if _id not in multi_ids:
+                    multi_ids.append(_id)
+        if multi_ids:
+            self.read_multiples_ids_from_file(multi_ids)
 
-    def adjust_for_2nd_row(self, df, param):
+    def read_multiples_ids_from_file(self, multi_ids):
+        file_2read = self._ids_files[multi_ids[0]]['file_name']
+        file_path  = self._ids_files[multi_ids[0]]['file_path']
+        df = self.tab.get_df(file_path)
+        # df.drop(self.vars.rows_2rm_per_file()[file_2read], inplace = True)
+        cols_2rename = {df.columns.tolist()[0]: self.col_2set_index}
+        df.rename(columns = cols_2rename, inplace=True)
+        for _id in multi_ids:
+            df_id = df[[self.col_2set_index, _id]]
+            df_id = self.adjust_rm_rows(df_id, self.vars.rows_2rm_per_file()[file_2read])
+            df_id = self.tab.rm_rows_with_nan(df_id, self.col_2set_index)
+            df_id = self.prepare_df_for_grid(df_id, _id)
+            self.df_all_data[_id] = df_id
+
+
+    def read_id_per_file(self, file_2read, _id):
+        file_path  = self._ids_files[_id]['file_path']
+        cols = list(self.param_names.values())
+        if file_2read in self.vars.get_cols_2read():
+            cols = self.vars.get_cols_2read()[file_2read]
+        df = self.tab.get_df(file_path, cols = cols)
+        if file_2read in self.vars.rows_2rm_per_file():
+            df = self.adjust_rm_rows(df, self.vars.rows_2rm_per_file()[file_2read])
+        df = self.tab.rm_rows_with_nan(df, self.col_2set_index)
+        df = self.prepare_df_for_grid(df, _id)
+        self.df_all_data[_id] = df
+
+    def prepare_df_for_grid(self, df, _id):
+        df.rename(columns = {df.columns.tolist()[-1]: _id}, inplace=True)
+        df = self.tab.change_index(df, self.col_2set_index)
+        return df
+
+    def adjust_rm_rows(self, df, rows):
         '''
             two files have the parameters in the second row
             script changes row names
             returns df with structure: col1, col2
         '''
-        df.columns = df.iloc[0]
-        df.drop([0], inplace = True)
+        df.rename(columns = {df.columns.tolist()[0]: self.col_2set_index}, inplace=True)
+        df.drop(rows, inplace = True)
+        df.reset_index(drop = True, inplace = True)
         return df
 
+    def concatenate_dfs(self):
+        frames       = (self.df_all_data[i] for i in self.df_all_data)
+        self.grid_df = self.tab.concat_dfs(frames, ax=1, sort=True)
+
     def create_data_file(self):
-        path_name_f2save   = path.join('/home/ssp/Desktop', self.project_vars["GLM_file_group"])
+        '''
+            save final grid file to use for stats
+        '''
+        path_name_f2save   = path.join(self.materials_DIR, self.project_vars["GLM_file_group"])
         print('creating file with groups {}'.format(path_name_f2save))
         self.tab.save_df(self.grid_df, path_name_f2save, sheet_name = 'grid')
