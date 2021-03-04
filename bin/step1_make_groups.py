@@ -35,14 +35,14 @@ class MakeGroupFile:
             reading the info.xlsx file, extracting list of IDs and corresponding
             files with data
         '''
-        self.df_src     = self.tab.get_df(self.vars.f_src()['file_src'])
+        self.df_src    = self.tab.get_df(self.vars.f_src()['file_src'])
         self._src_data = self.vars.get_data_from_src_file(self.df_src)
         self.populate_grid()
-        self.concatenate_dfs()
-        self.grid_df = self.tab.rm_rows_with_nan(self.grid_df)
-        self.grid_df = self.grid_df.transpose()
-        self.grid_df.index.name = self._id
-        self.create_data_file()
+        # self.concatenate_dfs() #!!!!!!!!!!!! UNCOMMENT
+        # self.grid_df = self.tab.rm_rows_with_nan(self.grid_df) #!!!!!!!!!!!! UNCOMMENT
+        # self.grid_df = self.grid_df.transpose() #!!!!!!!!!!!! UNCOMMENT
+        # self.grid_df.index.name = self._id #!!!!!!!!!!!! UNCOMMENT
+        # self.create_data_file() #!!!!!!!!!!!! UNCOMMENT
 
 
     def populate_grid(self):
@@ -56,7 +56,8 @@ class MakeGroupFile:
         for _id in list(self._src_data.keys()):
             file_2read = self._src_data[_id]['file_name']
             if file_2read not in self.vars.files_multi_ids():
-                self.read_id_per_file(file_2read, _id)
+                pass #!!!!!!!!!!!! UNCOMMENT
+                # self.read_id_per_file(file_2read, _id) #!!!!!!!!!!!! UNCOMMENT
             else:
                 if _id not in multi_ids:
                     multi_ids.append(_id)
