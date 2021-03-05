@@ -41,9 +41,10 @@ class VARS():
                 "MS162577_Ayuko_Lyden_autism_all_data_PD": [0]}
 
     def files_multi_ids(self):
-        return ["Ayuko_Lyden_autism_project_all_60_samples_PD",
-        		"MS183640_Alberto_Lyden_complete_analysis",
-                "MS216945QEHF_Ayuko_Hoshino"]
+        return ["MS216945QEHF_Ayuko_Hoshino",
+                "Ayuko_Lyden_autism_project_all_60_samples_PD",
+        		"MS183640_Alberto_Lyden_complete_analysis"
+                ]
 
     def get_cols_2read(self):
         return {"MS162577_Ayuko_Lyden_autism_all_data_PD" :
