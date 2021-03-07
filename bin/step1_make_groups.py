@@ -52,24 +52,29 @@ class MakeGroupFile:
         """
         self.df_all_data = dict()
         self.col_2set_index = self.param_names["protein_id"]
-        multi_ids = list()
+        multi_ids = {i: list() for i in self.vars.files_multi_ids()}
         for _id in list(self._src_data.keys()):
             file_2read = self._src_data[_id]['file_name']
-            if file_2read not in self.vars.files_multi_ids():
+            if file_2read in multi_ids:
+                # if _id not in multi_ids:
+                    multi_ids[file_2read].append(_id)
+            else:
                 pass #!!!!!!!!!!!! UNCOMMENT
                 # self.read_id_per_file(file_2read, _id) #!!!!!!!!!!!! UNCOMMENT
-            else:
-                if _id not in multi_ids:
-                    multi_ids.append(_id)
-        if multi_ids:
-            self.read_multiples_ids_from_file(multi_ids)
+        self.read_multiples_ids_from_file(multi_ids)
 
     def read_multiples_ids_from_file(self, multi_ids):
-        '''MUST change to iterate through files and ids, instead of id and file
+        ''' iterate through files that contain multiple ids
+        	extract each id
         '''
-        file_2read = self._src_data[multi_ids[-1]]['file_name']
-        file_path  = self._src_data[multi_ids[-1]]['file_path']
-        print(file_2read, file_path)
+        for file in multi_ids:
+        	file_2read = self._src_data[multi_ids[file][0]]['file_name']
+        	file_path = self._src_data[multi_ids[file][0]]['file_path']
+        	print(file_2read, file_path)
+
+        # file_2read = self._src_data[multi_ids[-1]]['file_name']
+        # file_path  = self._src_data[multi_ids[-1]]['file_path']
+        # print(file_2read, file_path)
         # df = self.tab.get_df(file_path)
         # # df.drop(self.vars.rows_2rm_per_file()[file_2read], inplace = True)
         # cols_2rename = {df.columns.tolist()[0]: self.col_2set_index}
