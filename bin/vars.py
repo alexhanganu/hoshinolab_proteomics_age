@@ -20,7 +20,7 @@ class VARS():
         cur_file_name = ''
         for ix in df.index:
             index_val = df.at[ix, self._id]
-            file_name = df.at[ix, self.f_src()['col_files']].strip('.xlsx')
+            file_name = df.at[ix, self.f_src()['col_files']].replace('.xlsx','')
             if file_name != cur_file_name:
                 cur_file_name = file_name
                 file_path = path.join(self.path_2src_data, f"{cur_file_name}.xlsx")
@@ -38,7 +38,9 @@ class VARS():
 
     def rows_2rm_per_file(self):
         return {"Ayuko_Lyden_autism_project_all_60_samples_PD": [0],
-                "MS162577_Ayuko_Lyden_autism_all_data_PD": [0]}
+                "MS162577_Ayuko_Lyden_autism_all_data_PD": [0],
+                "MS183640_Alberto_Lyden_complete_analysis": [0],
+                "MS216945QEHF_Ayuko_Hoshino": [0]}
 
     def files_multi_ids(self):
         return ["MS216945QEHF_Ayuko_Hoshino",
