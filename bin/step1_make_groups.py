@@ -75,17 +75,16 @@ class MakeGroupFile:
             df = self.tab.get_df(file_path)
             if file_2read in self.vars.rows_2rm_per_file():
                 df.drop(self.vars.rows_2rm_per_file()[file_2read], inplace = True)
-            print(df)
             cols_2rename = {df.columns.tolist()[0]: self.col_2set_index}
-            print(cols_2rename)
-            # df.rename(columns = cols_2rename, inplace=True)
-            # for _id in multi_ids:
-            #     df_id = df[[self.col_2set_index, _id]]
-            #     df_id = self.adjust_rm_rows(df_id, self.vars.rows_2rm_per_file()[file_2read])
-            #     df_id = self.tab.rm_rows_with_nan(df_id, self.col_2set_index, reset_index = True)
-            #     df_id = self.add_variables_4glm(df_id, _id)
-            #     df_id = self.prepare_df_for_grid(df_id, _id)
-            #     self.df_all_data[_id] = df_id
+            df.rename(columns = cols_2rename, inplace=True)
+            for _id in multi_ids[file]:
+                df_id = df[[self.col_2set_index, _id]]
+                df_id = self.adjust_rm_rows(df_id, self.vars.rows_2rm_per_file()[file_2read])
+                df_id = self.tab.rm_rows_with_nan(df_id, self.col_2set_index, reset_index = True)
+                df_id = self.add_variables_4glm(df_id, _id)
+                df_id = self.prepare_df_for_grid(df_id, _id)
+                self.df_all_data[_id] = df_id
+            print(self.df_all_data)#[_id])
 
 
     def read_id_per_file(self, file_2read, _id):
