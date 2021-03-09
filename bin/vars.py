@@ -44,8 +44,8 @@ class VARS():
 
     def files_multi_ids(self):
         return ["MS216945QEHF_Ayuko_Hoshino",
+        		"MS183640_Alberto_Lyden_complete_analysis",
                 "Ayuko_Lyden_autism_project_all_60_samples_PD",
-        		"MS183640_Alberto_Lyden_complete_analysis"
                 ]
 
     def get_cols_2read(self):
