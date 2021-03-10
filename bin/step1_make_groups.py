@@ -38,11 +38,11 @@ class MakeGroupFile:
         self.df_src    = self.tab.get_df(self.vars.f_src()['file_src'])
         self._src_data = self.vars.get_data_from_src_file(self.df_src)
         self.populate_grid()
-        # self.concatenate_dfs() #!!!!!!!!!!!! UNCOMMENT
+        self.concatenate_dfs()
         # self.grid_df = self.tab.rm_rows_with_nan(self.grid_df) #!!!!!!!!!!!! UNCOMMENT
-        # self.grid_df = self.grid_df.transpose() #!!!!!!!!!!!! UNCOMMENT
-        # self.grid_df.index.name = self._id #!!!!!!!!!!!! UNCOMMENT
-        # self.create_data_file() #!!!!!!!!!!!! UNCOMMENT
+        self.grid_df = self.grid_df.transpose()
+        self.grid_df.index.name = self._id
+        self.create_data_file()
 
 
     def populate_grid(self):
@@ -59,15 +59,15 @@ class MakeGroupFile:
                 # if _id not in multi_ids:
                     multi_ids[file_2read].append(_id)
             else:
-                pass #!!!!!!!!!!!! UNCOMMENT
-                # self.read_id_per_file(file_2read, _id) #!!!!!!!!!!!! UNCOMMENT
+                # pass
+                self.read_id_per_file(file_2read, _id)
         self.read_multiples_ids_from_file(multi_ids)
 
     def read_multiples_ids_from_file(self, multi_ids):
         ''' iterate through files that contain multiple ids
             extract each id
         '''
-        for file in list(multi_ids.keys())[:1]:
+        for file in list(multi_ids.keys())[:2]:
             file_2read = self._src_data[multi_ids[file][0]]['file_name']
             file_path = self._src_data[multi_ids[file][0]]['file_path']
             print(file_2read, file_path)
@@ -135,6 +135,6 @@ class MakeGroupFile:
         '''
             save final grid file to use for stats
         '''
-        path_name_f2save   = path.join(self.materials_DIR, self.project_vars["GLM_file_group"])
+        path_name_f2save   = '/home/ssp/Desktop/grid1.csv'# path.join(self.materials_DIR, self.project_vars["GLM_file_group"])
         print('creating file with groups {}'.format(path_name_f2save))
         self.tab.save_df(self.grid_df, path_name_f2save, sheet_name = 'grid')
