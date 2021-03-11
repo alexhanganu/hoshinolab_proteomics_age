@@ -40,7 +40,7 @@ class MakeGroupFile:
         self.populate_grid()
         self.concatenate_dfs()
         # self.grid_df = self.tab.rm_rows_with_nan(self.grid_df) #!!!!!!!!!!!! UNCOMMENT
-        self.grid_df = self.grid_df.transpose()
+        # self.grid_df = self.grid_df.transpose()
         self.grid_df.index.name = self._id
         self.create_data_file()
 
@@ -56,10 +56,8 @@ class MakeGroupFile:
         for _id in list(self._src_data.keys()):
             file_2read = self._src_data[_id]['file_name']
             if file_2read in multi_ids:
-                # if _id not in multi_ids:
                     multi_ids[file_2read].append(_id)
             else:
-                # pass
                 self.read_id_per_file(file_2read, _id)
         self.read_multiples_ids_from_file(multi_ids)
 
@@ -67,7 +65,7 @@ class MakeGroupFile:
         ''' iterate through files that contain multiple ids
             extract each id
         '''
-        for file in list(multi_ids.keys())[:2]:
+        for file in list(multi_ids.keys()):
             file_2read = self._src_data[multi_ids[file][0]]['file_name']
             file_path = self._src_data[multi_ids[file][0]]['file_path']
             print(file_2read, file_path)
@@ -128,7 +126,7 @@ class MakeGroupFile:
         return df
 
     def concatenate_dfs(self):
-        frames       = (self.df_all_data[i] for i in self.df_all_data)
+        frames       = (self.df_all_data[_id] for _id in self.df_all_data)
         self.grid_df = self.tab.concat_dfs(frames, ax=1, sort=True)
 
     def create_data_file(self):
