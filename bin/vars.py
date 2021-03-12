@@ -52,3 +52,6 @@ class VARS():
         return {"MS162577_Ayuko_Lyden_autism_all_data_PD" :
                         ["Unnamed: 0", "control_AH_1"],}
 
+    def lav_f_src(self):
+        lav_f_src  = path.join(self.materials_DIR, "source", 'lav', "organ_source_distribution_Ayuko_Lyden_autism_project_all_60_samples_PD_per_protein.csv")
+        return lav_f_src
