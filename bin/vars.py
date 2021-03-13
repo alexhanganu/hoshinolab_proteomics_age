@@ -54,4 +54,6 @@ class VARS():
 
     def lav_f_src(self):
         lav_f_src  = path.join(self.materials_DIR, "source", 'lav', "organ_source_distribution_Ayuko_Lyden_autism_project_all_60_samples_PD_per_protein.csv")
-        return lav_f_src
+        return {'file_src': lav_f_src,
+                'index': 'protein id',
+                'grid_name': 'lav_organ_source_grid'}

@@ -133,6 +133,6 @@ class MakeGroupFile:
         '''
             save final grid file to use for stats
         '''
-        path_name_f2save   = '/home/ssp/Desktop/grid1.csv'# path.join(self.materials_DIR, self.project_vars["GLM_file_group"])
+        path_name_f2save   = path.join(self.materials_DIR, self.project_vars["GLM_file_group"])
         print('creating file with groups {}'.format(path_name_f2save))
         self.tab.save_df(self.grid_df, path_name_f2save, sheet_name = 'grid')
