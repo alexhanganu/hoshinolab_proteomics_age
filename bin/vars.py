@@ -11,9 +11,13 @@ class VARS():
 
     def f_src(self):
         f_src_subs  = path.join(self.path_2src_data, "info.xlsx")
+        grid_name   = 'grid'
+        grid_f      = path.join(self.materials_DIR, f"{grid_name}.csv")
         col_files = 'File name'
         return {'file_src' : f_src_subs,
-                'col_files': col_files}
+                'col_files': col_files,
+                'grid_name': grid_name,
+                'grid_file': grid_f}
 
     def get_data_from_src_file(self, df):
         _src_data = {}
@@ -54,6 +58,10 @@ class VARS():
 
     def lav_f_src(self):
         lav_f_src  = path.join(self.materials_DIR, "source", 'lav', "organ_source_distribution_Ayuko_Lyden_autism_project_all_60_samples_PD_per_protein.csv")
+        grid_name   = 'lav_organ_source_grid'
+        grid_f      = path.join(self.materials_DIR, f"{grid_name}.csv")
+
         return {'file_src': lav_f_src,
                 'index': 'protein id',
-                'grid_name': 'lav_organ_source_grid'}
+                'grid_name': grid_name,
+                'grid_file': grid_f}
