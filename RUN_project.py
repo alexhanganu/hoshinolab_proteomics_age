@@ -5,7 +5,8 @@
 project = "hoshinolab_proteomics_age"
 
 STEP0_make_groups = False
-STEP1_organ       = True
+STEP0_organ       = False
+STEP1_stats       = True
 
 from os import path, system
 from bin import nimb_link
@@ -22,6 +23,10 @@ if STEP0_make_groups:
     from bin.step1_make_groups import MakeGroupFile
     MakeGroupFile(project_vars, utils, Table, Preprocess)
 
-if STEP1_organ:
+if STEP0_organ:
 	from bin.step2_get_organ_data import GetOrganData
-	GetOrganData(project_vars, utils, Table, Preprocess)
+	GetOrganData(project_vars, Table)
+
+if STEP1_stats:
+	from bin.step3_stats import Stats
+	Stats(project_vars, utils, Table, Preprocess)

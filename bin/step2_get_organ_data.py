@@ -16,9 +16,8 @@ from .vars import VARS
 
 
 class GetOrganData:
-    def __init__(self, project_vars, utils, Table, Preprocess):
+    def __init__(self, project_vars, Table):
         self.tab           = Table()
-        self.preproc       = Preprocess()
         self.project_vars  = project_vars
         self._id           = project_vars['id_col']
         self.vars_4glm     = project_vars['variables_for_glm']

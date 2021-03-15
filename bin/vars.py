@@ -17,7 +17,8 @@ class VARS():
         return {'file_src' : f_src_subs,
                 'col_files': col_files,
                 'grid_name': grid_name,
-                'grid_file': grid_f}
+                'grid_file': grid_f,
+                'index'    : 'sample name'}
 
     def get_data_from_src_file(self, df):
         _src_data = {}
@@ -64,4 +65,5 @@ class VARS():
         return {'file_src': lav_f_src,
                 'index': 'protein id',
                 'grid_name': grid_name,
-                'grid_file': grid_f}
+                'grid_file': grid_f,
+                'index'    : 'protein id'}
