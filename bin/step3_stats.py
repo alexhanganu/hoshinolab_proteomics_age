@@ -34,9 +34,11 @@ class Stats:
         grid_src_df           = self.tab.get_df(self.vars.f_src()['grid_file'])
         grid_lav_df       = self.tab.get_df(self.vars.lav_f_src()['grid_file'])
 
-        _ids_src = grid_src_df[self.vars.f_src()['index']]
-        _ids_lav_src = grid_lav_df[self.vars.lav_f_src()['index']]
-        print([i for i in _ids_src if i in _ids_lav_src])
+        _ids_src = grid_src_df[self.vars.f_src()['index']].tolist()
+        _ids_lav_src = grid_lav_df[self.vars.lav_f_src()['index']].tolist()
+        _ids_common = [i for i in _ids_src if i in _ids_lav_src]
+        _ids_miss = [i for i in _ids_src if i not in _ids_lav_src]
+        print(len(_ids_common), len(_ids_miss))
         # compare if proteins are similar in both df: sample name and protein id
 
 
