@@ -34,8 +34,9 @@ class Stats:
         grid_src_df           = self.tab.get_df(self.vars.f_src()['grid_file'])
         grid_lav_df       = self.tab.get_df(self.vars.lav_f_src()['grid_file'])
 
-        print(grid_src_df)
-        print(grid_lav_df)
+        _ids_src = grid_src_df[self.vars.f_src()['index']]
+        _ids_lav_src = grid_lav_df[self.vars.lav_f_src()['index']]
+        print([i for i in _ids_src if i in _ids_lav_src])
         # compare if proteins are similar in both df: sample name and protein id
 
 
