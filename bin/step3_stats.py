@@ -38,7 +38,7 @@ class Stats:
         _ids_lav_src = grid_lav_df[self.vars.lav_f_src()['index']].tolist()
         _ids_common = [i for i in _ids_src if i in _ids_lav_src]
         _ids_miss = [i for i in _ids_src if i not in _ids_lav_src]
-        print(len(_ids_common), len(_ids_miss))
+        print(len(_ids_common), len(_ids_miss), len([i for i in _ids_lav_src if i not in _ids_src]))
         # compare if proteins are similar in both df: sample name and protein id
 
 
