@@ -22,7 +22,8 @@ class GetOrganData:
         self._id           = project_vars['id_col']
         self.vars_4glm     = project_vars['variables_for_glm']
         self.materials_DIR = project_vars["materials_DIR"][1]
-        self.vars          = VARS(self.materials_DIR, project_vars)
+        self.vars          = VARS(self.materials_DIR,
+                                  project_vars)
         self.param_names   = self.vars.param_names()
 
         self.run()

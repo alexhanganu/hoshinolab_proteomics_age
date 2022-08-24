@@ -7,12 +7,16 @@ class VARS():
         self.materials_DIR  = materials_DIR
         self.vars_4glm      = project_vars['variables_for_glm']
         self._id            = project_vars['id_col']
-        self.path_2src_data = path.join(self.materials_DIR, "source", "data for Alex and Lav")
+        self.path_2src_data = path.join(self.materials_DIR,
+                                        "sourcedata",
+                                        "data for Alex and Lav")
 
     def f_src(self):
-        f_src_subs  = path.join(self.path_2src_data, "info.xlsx")
+        f_src_subs  = path.join(self.path_2src_data,
+                                "info.xlsx")
         grid_name   = 'grid'
-        grid_f      = path.join(self.materials_DIR, f"{grid_name}.csv")
+        grid_f      = path.join(self.materials_DIR,
+                                f"{grid_name}.csv")
         col_files = 'File name'
         return {'file_src' : f_src_subs,
                 'col_files': col_files,
@@ -28,7 +32,8 @@ class VARS():
             file_name = df.at[ix, self.f_src()['col_files']].replace('.xlsx','')
             if file_name != cur_file_name:
                 cur_file_name = file_name
-                file_path = path.join(self.path_2src_data, f"{cur_file_name}.xlsx")
+                file_path = path.join(self.path_2src_data,
+                                      f"{cur_file_name}.xlsx")
             _src_data[index_val] = {
                                         'file_name' : cur_file_name,
                                         'file_path' : file_path,
@@ -58,7 +63,10 @@ class VARS():
                         ["Unnamed: 0", "control_AH_1"],}
 
     def lav_f_src(self):
-        lav_f_src  = path.join(self.materials_DIR, "source", 'lav', "organ_source_distribution_Ayuko_Lyden_autism_project_all_60_samples_PD_per_protein.csv")
+        lav_f_src  = path.join(self.materials_DIR,
+                               "sourcedata",
+                               "lav",
+                               "organ_source_distribution_Ayuko_Lyden_autism_project_all_60_samples_PD_per_protein.csv")
         grid_name   = 'lav_organ_source_grid'
         grid_f      = path.join(self.materials_DIR, f"{grid_name}.csv")
 

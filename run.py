@@ -2,7 +2,7 @@
 # coding: utf-8
 # last update: 20200109
 
-project = "hoshinolab_proteomics_age"
+project = "ayuko_lav"
 
 STEP0_make_groups = False
 STEP0_organ       = False
